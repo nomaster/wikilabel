@@ -18,7 +18,7 @@ templates.each do |template|
   when "Resource"
     filename = title.downcase+".pdf"
     pdftitle = "#{properties['name']}"
-    pdftext = "is #{properties['ownership']} by #{properties['contactnick']}.  Use #{properties['use']} for #{properties['description']}. Put into #{properties['location']}. If broken #{properties['broken']}. If annoying #{properties['annoying']}.\n Date: #{Date.today}"
+    pdftext = "Use #{properties['use']} for #{properties['description']}. Put into #{properties['location']}. If broken #{properties['broken']}. If annoying #{properties['annoying']}.\n Date: #{Date.today}"
     Prawn::Document.generate(filename, labeloptions) do
       font "computerfont.ttf"
       font_size 14
@@ -26,6 +26,14 @@ templates.each do |template|
       font "cpmono_v07.ttf"
       font_size 8
       text "\n"
+      case properties['ownership']
+      when 'club'
+        text "is collective property."
+      when 'private'
+        text "is private property by #{properties['contactnick']}."
+      when 'lent'
+        text "is lent by #{properties['contactnick']}."
+      end
       text pdftext
       font_size 6
       move_cursor_to(7)
