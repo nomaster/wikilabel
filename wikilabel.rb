@@ -4,7 +4,7 @@ require 'prawn'
 
 title = ARGV[0]
 page_url = "https://wiki.chaosdorf.de/#{title.gsub(' ','_')}"
-labeloptions = {:margin => 10, :left_margin => 20, :page_size => [255,107], :format => :landscape}
+labeloptions = {:margin => 12, :left_margin => 20, :page_size => [255,107], :format => :landscape}
 mw = MediaWiki::Gateway.new("https://wiki.chaosdorf.de/api.php")
 templates = mw.get(title).gsub(/[\r\n]/,'').scan(/{{([^}}]*)}}/)
 templates.each do |template|
