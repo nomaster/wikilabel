@@ -36,7 +36,7 @@ class HandlerDerp < Mongrel::HttpHandler
         type = fields.shift.first
         case type
         when "Resource"
-          filename = "tmp/"+title.downcase+".pdf"
+          filename = "tmp/"+title.downcase.gsub(/\//, '-')+".pdf"
           pdftitle = "#{properties['name']}"
           pdftext = "Use #{properties['use']} for #{properties['description']}. Put into #{properties['location']}. If broken #{properties['broken']}. If annoying #{properties['annoying']}.\n Date: #{Date.today}"
           Prawn::Document.generate(filename, labeloptions) do
@@ -60,7 +60,7 @@ class HandlerDerp < Mongrel::HttpHandler
             text page_url
           end
         when "Book"
-          filename = "tmp/"+title.downcase.gsub("book:", "")+".pdf"
+          filename = "tmp/"+title.downcase.gsub("book:", "").gsub(/\//, '-')+".pdf"
           Prawn::Document.generate(filename, labeloptions) do
             font "computerfont.ttf"
             font_size 10
