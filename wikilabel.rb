@@ -38,7 +38,39 @@ class HandlerDerp < Mongrel::HttpHandler
         when "Resource"
           filename = "tmp/"+title.downcase.gsub(/\//, '-')+".pdf"
           pdftitle = "#{properties['name']}"
-          pdftext = "Use #{properties['use']} for #{properties['description']}. Put into #{properties['location']}. If broken #{properties['broken']}. If annoying #{properties['annoying']}.\n Date: #{Date.today}"
+          usage = 'unknown'
+          ownership = 'unknown'
+          case properties['ownership']
+          when 'club'
+            ownership = "collective property"
+          when 'private'
+            ownership = "private property of #{properties['contactnick']}"
+          when 'lent'
+            ownership = "lent by #{properties['contactnick']}"
+          end
+          case properties['use']
+          when 'free'
+            usage = 'freely'
+          when 'ask'
+            usage = 'with permission'
+          when 'rtfm'
+            usage = 'after reading manual'
+          when 'no'
+            usage = 'not at all'
+          when 'careful'
+            usage = 'carefully'
+          when 'payment'
+            usage = 'after donation'
+          end
+          pdftext = "#{properties['description']}\nIs #{ownership}. " +
+            "Use #{usage}. Put into #{properties['location']}. "
+          if properties['broken']
+            pdftext << "If broken #{properties['broken']}. "
+          end
+          if properties['annoying']
+            pdftext << "If annoying #{properties['annoying']}."
+          end
+          pdftext << "\nDate: #{Date.today}"
           Prawn::Document.generate(filename, labeloptions) do
             font "computerfont.ttf"
             font_size 14
@@ -46,14 +78,6 @@ class HandlerDerp < Mongrel::HttpHandler
             font "cpmono_v07.ttf"
             font_size 8
             text "\n"
-            case properties['ownership']
-            when 'club'
-              text "is collective property."
-            when 'private'
-              text "is private property by #{properties['contactnick']}."
-            when 'lent'
-              text "is lent by #{properties['contactnick']}."
-            end
             text pdftext
             font_size 6
             move_cursor_to(7)
