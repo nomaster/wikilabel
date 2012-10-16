@@ -1,25 +1,10 @@
 require 'rubygems'
 require 'media_wiki'
 require 'prawn'
-require 'mongrel'
 
-host    = ARGV[0] || "0.0.0.0"
-port    = ARGV[1] || 9292
-
-class HandlerDebug < Mongrel::HttpHandler
-  def process(request, response)
-    title = Mongrel::HttpRequest.unescape(request.params['QUERY_STRING'])
-    response.start(200) do |head, out|
-      head["Content-Type"] = "text/plain"
-      out.write title
-    end
-  end
-end
-
-
-class HandlerDerp < Mongrel::HttpHandler
-  def process(request, response)
-    title = Mongrel::HttpRequest.unescape(request.params['QUERY_STRING'])
+class WikiLabel
+  def self.call(env)
+    title = env['REQUEST_PATH'][1..255]
     filename = 0
     page_url = "https://wiki.chaosdorf.de/#{title.gsub(' ','_')}"
     labeloptions = {:margin => 12, :left_margin => 20, :page_size => [255,107], :format => :landscape}
@@ -109,27 +94,11 @@ class HandlerDerp < Mongrel::HttpHandler
         end
       end
       file = File.new(filename, "r")
-      response.start(200) do |head, out|
-        head["Content-Type"] = "application/pdf"
-        out.write open(filename, "rb") {|io| io.read }
-      end
+      return [200, {"Content-Type" => "application/pdf"}, [open(filename, "rb"){|io| io.read }]]
     else
-      response.start(500) do |head, out|
-        head["Content-Type"] = "text/plain"
-        out.write "No such wiki page"
-      end
+      return [404, {"Content-Type" => "text/plain"}, ["Page #{title} could not be found in the Chaosdorf Wiki"]]
     end
   end
 end
 
-config = Mongrel::Configurator.new :host => host, :port => port do
-  listener do
-#    uri "/debug",         :handler => HandlerDebug.new, :in_front => true
-    uri "/",              :handler => HandlerDerp.new
-  end
-  trap("INT") { stop }
-  trap("TERM") { stop }
-  run
-end
 
-config.join
