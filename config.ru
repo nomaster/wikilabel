@@ -13,4 +13,4 @@ builder = Rack::Builder.new do
   run Middleman.server
 end
 
-Rack::Handler::Mongrel.run builder, :Port => 9292
+Rack::Handler::Mongrel.run builder
