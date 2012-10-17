@@ -6,11 +6,8 @@ require 'wikilabel'
 
 use Rack::CommonLogger
 
-builder = Rack::Builder.new do
-  map  '/label' do
-    run WikiLabel
-  end
-  run Middleman.server
+map  '/label' do
+  run WikiLabel
 end
 
-Rack::Handler::Mongrel.run builder
+run Middleman.server
