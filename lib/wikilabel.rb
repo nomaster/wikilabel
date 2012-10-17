@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'media_wiki'
 require 'prawn'
+require 'tempfile'
 
 class WikiLabel
   def self.call(env)
@@ -12,6 +13,7 @@ class WikiLabel
     mw = MediaWiki::Gateway.new("https://wiki.chaosdorf.de/api.php")
     site = mw.get(title)
     if site
+      tempfile = Tempfile.new('tmp')
       templates = site.gsub(/[\r\n]/,'').scan(/{{([^}}]*)}}/)
       templates.each do |template|
         fields = template[0].split("|")
@@ -22,7 +24,6 @@ class WikiLabel
         type = fields.shift.first
         case type
         when "Resource"
-          filename = "tmp/"+title.downcase.gsub(/\//, '-')+".pdf"
           pdftitle = "#{properties['name']}"
           usage = 'unknown'
           ownership = 'unknown'
@@ -57,7 +58,7 @@ class WikiLabel
             pdftext << "If annoying #{properties['annoying']}."
           end
           pdftext << "\nDate: #{Date.today}"
-          Prawn::Document.generate(filename, labeloptions) do
+          Prawn::Document.generate(tempfile, labeloptions) do
             font "computerfont.ttf"
             font_size 14
             text pdftitle
@@ -70,8 +71,7 @@ class WikiLabel
             text page_url
           end
         when "Book"
-          filename = "tmp/"+title.downcase.gsub("book:", "").gsub(/\//, '-')+".pdf"
-          Prawn::Document.generate(filename, labeloptions) do
+          Prawn::Document.generate(tempfile, labeloptions) do
             font "computerfont.ttf"
             font_size 10
             text "This book belongs into the Chaosdorf Bookshelf.\nRead it, comment it, share it!"
@@ -94,8 +94,7 @@ class WikiLabel
           puts "Warning: #{type} is an unknown object type. Currently, only resources and books are supported."
         end
       end
-      file = File.new(filename, "r")
-      return [200, {"Content-Type" => "application/pdf"}, [open(filename, "rb"){|io| io.read }]]
+      return [200, {"Content-Type" => "application/pdf"}, [tempfile.read]]
     else
       return [404, {"Content-Type" => "text/plain"}, ["Page #{title} could not be found in the Chaosdorf Wiki"]]
     end
