@@ -1,15 +1,16 @@
 $LOAD_PATH << './lib'
 
 require 'rubygems'
-require 'rack'
+require 'middleman/rack'
 require 'wikilabel'
 
 use Rack::CommonLogger
 
 builder = Rack::Builder.new do
-  map  '/' do
+  map  '/label' do
     run WikiLabel
   end
+  run Middleman.server
 end
 
 Rack::Handler::Mongrel.run builder, :Port => 9292

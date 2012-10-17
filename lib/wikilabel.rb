@@ -4,7 +4,8 @@ require 'prawn'
 
 class WikiLabel
   def self.call(env)
-    title = env['REQUEST_PATH'][1..255]
+    request = Rack::Request.new(env)
+    title = request.params['w']
     filename = 0
     page_url = "https://wiki.chaosdorf.de/#{title.gsub(' ','_')}"
     labeloptions = {:margin => 12, :left_margin => 20, :page_size => [255,107], :format => :landscape}

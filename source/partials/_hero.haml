@@ -1,0 +1,18 @@
+<!-- Main hero unit for a primary marketing message or call to action -->
+.hero-unit
+  %h1 #{data.page.title || "Label all die Dinge!"}
+  %p
+  :markdown
+     Mit WikiLabel kannst du für die Ressourcen im Chaosdorf-Wiki schicke Labels generieren.
+
+     1. Erstelle oder aktualisiere eine Ressource im Wiki
+     2. Gib unten den Namen der Ressource ein, z.b. “Printer”
+     3. Klicke auf “Abschicken” und empfange ein PDF
+     4. Drucke das PDF aus, schneide das Label aus und klebe es auf den Gegenstand
+
+  %form{ :action => '/label', :method => :get }
+    %legend Los geht’s!
+    %div.input-prepend
+      %span.add-on https://wiki.chaosdorf.de/
+      %input.span2{ :type => :text, :name => :w, :placeholder => 'Seitenname' }
+      %input.btn.btn-primary{ :type => :submit, :value => 'Abschicken' }
