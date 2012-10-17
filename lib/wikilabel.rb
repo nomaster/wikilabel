@@ -59,10 +59,10 @@ class WikiLabel
           end
           pdftext << "\nDate: #{Date.today}"
           Prawn::Document.generate(tempfile, labeloptions) do
-            font "computerfont.ttf"
+            font "fonts/computerfont.ttf"
             font_size 14
             text pdftitle
-            font "cpmono_v07.ttf"
+            font "fonts/cpmono_v07.ttf"
             font_size 8
             text "\n"
             text pdftext
