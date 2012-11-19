@@ -94,7 +94,7 @@ class WikiLabel
           puts "Warning: #{type} is an unknown object type. Currently, only resources and books are supported."
         end
       end
-      return [200, {"Content-Type" => "application/pdf"}, [tempfile.read]]
+      return [200, {"Content-Type" => "application/pdf", "Content-Disposition" => " attachment; filename=WikiLabel-#{title}.pdf" }, [tempfile.read]]
     else
       return [404, {"Content-Type" => "text/plain"}, ["Page #{title} could not be found in the Chaosdorf Wiki"]]
     end
