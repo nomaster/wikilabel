@@ -72,10 +72,10 @@ class WikiLabel
           end
         when "Book"
           Prawn::Document.generate(tempfile, labeloptions) do
-            font "computerfont.ttf"
+            font "fonts/computerfont.ttf"
             font_size 10
             text "This book belongs into the Chaosdorf Bookshelf.\nRead it, comment it, share it!"
-            font "cpmono_v07.ttf"
+            font "fonts/cpmono_v07.ttf"
             font_size 8
             text "\n"
             case properties['ownership']
