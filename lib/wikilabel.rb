@@ -6,10 +6,10 @@ require 'tempfile'
 class WikiLabel
   def self.call(env)
     request = Rack::Request.new(env)
-    title = request.params['w']
+    title = request.params['w'].gsub(' ','_')
     filename = 0
-    page_url = "https://wiki.chaosdorf.de/#{title.gsub(' ','_')}"
-    labeloptions = {:margin => 12, :left_margin => 20, :page_size => [255,107], :format => :landscape}
+    page_url = "https://wiki.chaosdorf.de/#{title}"
+    labeloptions = {:margin => 8, :left_margin => 12, :page_size => [255,107], :format => :landscape}
     mw = MediaWiki::Gateway.new("https://wiki.chaosdorf.de/api.php")
     site = mw.get(title)
     if site
@@ -74,7 +74,7 @@ class WikiLabel
           Prawn::Document.generate(tempfile, labeloptions) do
             font "fonts/computerfont.ttf"
             font_size 10
-            text "This book belongs into the Chaosdorf Bookshelf.\nRead it, comment it, share it!"
+            text "This book belongs to the Chaosdorf Bookshelf."
             font "fonts/cpmono_v07.ttf"
             font_size 8
             text "\n"
@@ -86,8 +86,9 @@ class WikiLabel
             when 'club'
               text "Please put your name into the wiki before borrowing it. After reading, please return it immediately. It has been donated to the club."
             end
+            text "Read it, comment it, share it!"
             font_size 5
-            move_cursor_to(7)
+            move_cursor_to(12)
             text page_url
           end
         else
